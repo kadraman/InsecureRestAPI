@@ -1,7 +1,7 @@
 /*
-        InsecureRestAPI - an insecure NodeJS/Expres/MongoDB REST API for educational purposes.
+        InsecureRestAPI - an insecure NodeJS/Express/MongoDB REST API for educational purposes.
 
-        Copyright (C) 2024-2025  Kevin A. Lee (kadraman)
+        Copyright (C) 2024-2026  Kevin A. Lee (kadraman)
 
         This program is free software: you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by

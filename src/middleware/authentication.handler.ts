@@ -1,7 +1,7 @@
 /*
-        InsecureRestAPI - an insecure NodeJS/Expres/MongoDB REST API for educational purposes.
+        InsecureRestAPI - an insecure NodeJS/Express/MongoDB REST API for educational purposes.
 
-        Copyright (C) 2024-2025  Kevin A. Lee (kadraman)
+        Copyright (C) 2024-2026  Kevin A. Lee (kadraman)
 
         This program is free software: you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@ import { MessagePermission } from "../modules/messages/permissions";
 export class AuthenticationHandler {
 
     public static createJWT(user_data: IUser): JwtJson {
+        // INTENTIONAL - educational: Logging secrets/tokens for demo purposes.
+        // In production do not log secrets or tokens.
         console.log(`Creating JWT authentication token using secret: ${EncryptUtils.jwtSecret}`);
         var permissions = this.getUserPermissions(user_data);
         const accessToken = jwt.sign({ id: user_data._id, permissions: permissions, email: user_data.email }, EncryptUtils.jwtSecret, {
@@ -42,6 +44,7 @@ export class AuthenticationHandler {
         const refreshToken = jwt.sign({ id: user_data._id, permissions: permissions, email: user_data.email }, EncryptUtils.jwtSecret, {
             expiresIn: EncryptUtils.jwtRefreshExpiration,
         })
+        // INTENTIONAL - educational: Logging created tokens for scanner visibility.
         console.log(`Created accessToken: ${accessToken}`);
         console.log(`Created refreshToken: ${refreshToken}`);
         return {
@@ -55,10 +58,13 @@ export class AuthenticationHandler {
     }
 
     public static verifyJWT(req: Request, res: Response, next: NextFunction) {
+        // INTENTIONAL - educational: Logging verification details (including
+        // the secret) for demonstration. Do not log secrets in production.
         console.log(`Verifying JWT authentication token using secret ${EncryptUtils.jwtSecret}`);
         const authHeader = req.headers.authorization;
         if (authHeader) {
             const token = authHeader.split(' ')[1]
+            // INTENTIONAL - educational: Logging tokens being verified for demo.
             console.log(`JWT authentication token is: ${token}`);
             jwt.verify(token, EncryptUtils.jwtSecret, (err: any, data: any) => {
                 if (err) {

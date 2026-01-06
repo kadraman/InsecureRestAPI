@@ -1,7 +1,7 @@
 /*
-        InsecureRestAPI - an insecure NodeJS/Expres/MongoDB REST API for educational purposes.
+        InsecureRestAPI - an insecure NodeJS/Express/MongoDB REST API for educational purposes.
 
-        Copyright (C) 2024-2025  Kevin A. Lee (kadraman)
+        Copyright (C) 2024-2026  Kevin A. Lee (kadraman)
 
         This program is free software: you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by
@@ -61,15 +61,25 @@ export class SiteController {
     }
 
     public login_user(req: Request, res: Response) {
+        // INTENTIONAL - educational: Logging full request body (may include
+        // sensitive fields like passwords). This is for demo/scanner visibility
+        // only — avoid logging sensitive fields in production.
         Logger.debug(`Logging in user with with request body: ${JSON.stringify(req.body)}`);
-        const hashPassword = EncryptUtils.cryptPassword(req.body.password);
-        Logger.debug(`Hashed password for user ${req.body.email} is: ${hashPassword}`);
-        const user_filter = {email: req.body.email, password: hashPassword};
+        const inputPassword = String(req.body.password);
+        Logger.debug(`Checking credentials for user ${req.body.email}`);
+        // Find user by email first, then compare decrypted password to avoid
+        // mismatches caused by non-deterministic encryption (random IV).
+        const user_filter = {email: req.body.email};
         this.user_service.filterUser(user_filter, (err: any, user_data: IUser) => {
             if (err) {
                 mongoError(err, res);
             } else {
                 if (user_data) {
+                    // Compare provided password against stored (possibly IV-prefixed) password
+                    if (!EncryptUtils.comparePassword(inputPassword, (user_data as any).password)) {
+                        unauthorised('Invalid credentials', res);
+                        return;
+                    }
                     const jwtJson: JwtJson = AuthenticationHandler.createJWT(user_data);
                     // set cookie for refreshToken
                     res.cookie('refreshToken', jwtJson.refreshToken,
@@ -84,10 +94,14 @@ export class SiteController {
     }
 
     public subscribe_user(req: Request, res: Response) {
+        // INTENTIONAL - educational: Logging request body for demonstration.
         Logger.debug(`Subscribing user with details: ${JSON.stringify(req.body)}`);
         let userObj = <SubscribingUser>{};
 
         if (req.body.email !== null) {
+            // INTENTIONAL - educational: Unsafe string interpolation into JSON
+            // is used here on purpose to demonstrate injection risks. Do not
+            // construct JSON strings from untrusted input in production.
             userObj = jQuery.parseJSON(`
                 {
                     "firstName": "${req.body.firstName}",
@@ -111,6 +125,9 @@ export class SiteController {
         let params = JSON.stringify(req.query)
         Logger.debug(`Backing up newsletter database with details: ${params}`);
         try {
+            // INTENTIONAL - educational: Passing user-controlled file path into
+            // backup routine without validation demonstrates command injection
+            // and path-traversal risks for scanner detection.
             FileUtils.backupNewsletterDb(<String>req.query.filePath)
         } catch (err) {
             failureResponse(`Error backing up newsletter database: ${err}`, null, res);
