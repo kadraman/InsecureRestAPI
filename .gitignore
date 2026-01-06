@@ -143,3 +143,6 @@ iwa.db
 junit.xml
 aviator_*
 .fortify
+
+.otappsec
+fortifypackage.zip

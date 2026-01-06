@@ -1,6 +1,6 @@
 # InsecureRestAPI
 
-_InsecureRestAPI_ is a simple NodeJS/Express/MongoFB REST API that can be used for the demonstration of Application Security testing tools - such as [OpenText Application Security](https://www.opentext.com/products/application-security).
+_InsecureRestAPI_ is a simple NodeJS/Express/MongoDB REST API that can be used for the demonstration of Application Security testing tools - such as [OpenText Application Security](https://www.opentext.com/products/application-security).
 
 Pre-requisities
 ---------------
@@ -18,6 +18,7 @@ You can the run the application locally using the following:
 ```
 npm install
 npm install -g ts-node-dev
+npm test
 npm run dev
 ```
 
@@ -73,8 +74,8 @@ To carry out a Fortify ScanCentral SAST scan, run the following:
 ```
 fcli ssc session login
 scancentral package -o package.zip -bt none
-fcli sast-scan start --release "_YOURAPP_:_YOURREL_" -f package.zip --store curScan
-fcli sast-scan wait-for ::curScan::
+fcli sc-sast scan start --publish-to "_YOURAPP_:_YOURREL_" -f package.zip --store curScan
+fcli sc-sast scan wait-for ::curScan::
 fcli ssc action run appversion-summary --av "_YOURAPP_:_YOURREL_" -fs "Security Auditor View" -f summary.md
 ```
 
