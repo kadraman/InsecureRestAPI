@@ -7,9 +7,9 @@
     "build": "cross-env NODE_ENV=production npx tsc && cross-env NODE_ENV=production ts-node src/configs/swagger.config.ts && shx cp src/configs/swagger_output.json ./dist/configs",
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "dev:legacy": "cross-env USE_CRYPTO_BROWSERIFY=true USE_LEGACY_CIPHER=true npm run dev",
+    "dev:legacy": "cross-env USE_INSECURE=true USE_LEGACY_CIPHER=true npm run dev",
     "test": "cross-env jest --ci --reporters=default --reporters=jest-junit",
-    "test:legacy": "cross-env USE_CRYPTO_BROWSERIFY=true USE_LEGACY_CIPHER=true npm run test",
+    "test:legacy": "cross-env USE_INSECURE=true USE_LEGACY_CIPHER=true npm run test",
     "swagger": "cross-env ts-node src/configs/swagger.config.ts && shx cp src/configs/swagger_output.json ./public/docs/openapi.json"
   },
   "keywords": [],
